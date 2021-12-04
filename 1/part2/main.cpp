@@ -3,8 +3,7 @@
 
 using namespace std;
 
-int main()
-{
+int main() {
 #ifdef TEST
     freopen("../test_input.in", "r", stdin);
 #elif REAL
@@ -12,16 +11,13 @@ int main()
 #endif
     int depth, res = 0;
     deque<int> depths(3, 0);
-    for (size_t i = 0; i < 3; i++)
-    {
+    for (size_t i = 0; i < 3; i++) {
         cin >> depths[i];
     }
 
-    while (cin >> depth)
-    {
+    while (cin >> depth) {
         depths.push_back(depth);
-        if (depths.front() < depths.back())
-        {
+        if (depths.front() < depths.back()) {
             res++;
         }
         depths.pop_front();

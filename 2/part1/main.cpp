@@ -1,11 +1,10 @@
 #include <iostream>
 #include <string>
 
-#define print(x) cout<<#x<<": "<<x<<endl;
+#define print(x) cout << #x << ": " << x << endl;
 using namespace std;
 
-int main()
-{
+int main() {
 #ifdef TEST
     freopen("../test_input.in", "r", stdin);
 #elif REAL
@@ -14,22 +13,20 @@ int main()
     string command;
     int command_value;
     int pos = 0, depth = 0;
-    while (cin >> command >> command_value)
-    {
-        switch (command[0])
-        {
-        case 'f':
-            depth += command_value;
-            break;
-        case 'd':
-            pos += command_value;
-            break;
-        case 'u':
-            pos -= command_value;
-            break;
+    while (cin >> command >> command_value) {
+        switch (command[0]) {
+            case 'f':
+                depth += command_value;
+                break;
+            case 'd':
+                pos += command_value;
+                break;
+            case 'u':
+                pos -= command_value;
+                break;
 
-        default:
-            break;
+            default:
+                break;
         }
     }
 #ifdef DEBUG
