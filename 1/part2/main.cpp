@@ -6,9 +6,9 @@ using namespace std;
 int main()
 {
 #ifdef TEST
-    freopen("test_input.in", "r", stdin);
+    freopen("../test_input.in", "r", stdin);
 #elif REAL
-    freopen("real_input.in", "r", stdin);
+    freopen("../real_input.in", "r", stdin);
 #endif
     int depth, res = 0;
     deque<int> depths(3, 0);
