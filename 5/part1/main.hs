@@ -1,25 +1,5 @@
 import System.IO
 
-
--- linesStrings :: [String]
--- linesStrings = ["0,9 -> 5,9",
---                 "8,0 -> 0,8",  
---                 "9,4 -> 3,4",  
---                 "2,2 -> 2,1",  
---                 "7,0 -> 7,4",  
---                 "6,4 -> 2,0",  
---                 "0,9 -> 2,9",  
---                 "3,4 -> 1,4",  
---                 "0,0 -> 8,8",  
---                 "5,5 -> 8,2"]
-
--- array2D = [[1, 1, 1],[1, 1, 1],[1, 1, 1]]
-
-
--- toString :: Char -> String
--- toString c = [c]
-
-
 _splitOnChar :: String -> String -> Char -> (String, String)
 _splitOnChar [] ys c = ([], ys) 
 _splitOnChar (x:xs) ys c = if x == c then (xs, ys) else _splitOnChar xs (ys ++ [x]) c 
@@ -30,13 +10,6 @@ _splitArrow :: String -> String -> (String, String)
 _splitArrow xs ys = (fst $ splitOnChar (fst $ splitOnChar xs ' ') ' ', snd $ splitOnChar xs ' ')
 splitArrow :: String -> (String, String)
 splitArrow xs = _splitArrow xs []
-
-
-lengthDiff :: [t] -> [t] -> Int
-lengthDiff a b = length a - length b
-_splitListInHalf :: [t] -> [t] -> ([t], [t])
-_splitListInHalf (x:xs) [] = if length xs == 1 then (xs, []) else _splitListInHalf xs [x] 
-_splitListInHalf (x:xs) ys = if lengthDiff xs ys <= 0  then(x:xs, ys) else _splitListInHalf xs (ys ++ [x]) 
 
 
 splitListInHalf :: [t] -> ([t], [t])
@@ -69,10 +42,10 @@ drawLineVer board col begin end
     | otherwise = drawLineVer (increment2DElement board begin col) col (begin + 1) end
 
 drawLineDiagonal :: [[Int]] -> Int -> Int -> Int -> [[Int]]
-drawLineDiagonal board col begin end 
-    | begin == end = increment2DElement board begin col
-    | begin > end = drawLineVer board col end begin
-    | otherwise = drawLineVer (increment2DElement board begin col) col (begin + 1) end
+-- drawLineDiagonal board col begin end 
+--     | begin == end = increment2DElement board begin col
+--     | begin > end = drawLineVer board col end begin
+--     | otherwise = drawLineVer (increment2DElement board begin col) col (begin + 1) end
 
 generateBoard :: [[Int]] -> Int -> Int -> [[Int]]
 generateBoard board x y = if x == -1 then board else generateBoard (map (const 0) [0 .. y] : board) (x - 1) y
@@ -94,13 +67,9 @@ isDiagonalNeg line = div (snd (fst line) - snd (snd line)) (fst (fst line) - fst
 
 drawLines :: [[Int]] -> [((Int, Int),(Int, Int))] -> [[Int]]
 drawLines board [] = board  
--- drawLines board (line:lines) = if isHorizontal line then drawLines drawLineHor board line lines else if isVertical line then drawLines drawLineVer board line lines else drawLines board lines
 
 drawLines board (line:lines) 
-    -- | isHorizontal line = drawLines (drawLineHor board line) lines 
-    -- | isHorizontal line = drawLines (uncurry (drawLineHor board) (fst line) (snd $ snd line)) lines 
     | isHorizontal line = drawLines (drawLineHor board (snd $ fst line) (fst $ fst line) (fst $ snd line)) lines 
-    -- | isVertical line = drawLines (drawLineVer board line) lines 
     | isVertical line = drawLines (uncurry (drawLineVer board) (fst line) (snd $ snd line)) lines 
     | otherwise =  drawLines board lines
 
