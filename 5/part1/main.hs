@@ -11,10 +11,6 @@ _splitArrow xs ys = (fst $ splitOnChar (fst $ splitOnChar xs ' ') ' ', snd $ spl
 splitArrow :: String -> (String, String)
 splitArrow xs = _splitArrow xs []
 
-
-splitListInHalf :: [t] -> ([t], [t])
-splitListInHalf s = _splitListInHalf s []
-
 parseCoordString :: (String, String) -> (Int, Int)
 parseCoordString x = (read (snd x)::Int, read (fst x)::Int)
 
@@ -28,24 +24,10 @@ incrementElement list i = map (\x -> if snd x == i then fst x + 1 else fst x)  $
 
 increment2DElement board i j = map (\x -> if snd x == j then incrementElement (fst x) i else fst x)  $ zip board [0..]
 
-drawLineHor :: [[Int]] -> Int -> Int -> Int -> [[Int]]
--- drawLineHor board row begin end = if begin == end then board else drawLineHor (increment2DElement board row begin) row (begin + 1) end
-drawLineHor board row begin end 
-    | begin == end = increment2DElement board row begin
-    | begin > end =  drawLineHor board row end begin
-    | otherwise = drawLineHor (increment2DElement board row begin) row (begin + 1) end
-
-drawLineVer :: [[Int]] -> Int -> Int -> Int -> [[Int]]
-drawLineVer board col begin end 
-    | begin == end = increment2DElement board begin col
-    | begin > end = drawLineVer board col end begin
-    | otherwise = drawLineVer (increment2DElement board begin col) col (begin + 1) end
-
-drawLineDiagonal :: [[Int]] -> Int -> Int -> Int -> [[Int]]
--- drawLineDiagonal board col begin end 
---     | begin == end = increment2DElement board begin col
---     | begin > end = drawLineVer board col end begin
---     | otherwise = drawLineVer (increment2DElement board begin col) col (begin + 1) end
+drawLine :: [[Int]] -> (Int, Int) -> (Int, Int) -> (Int, Int) -> [[Int]]
+drawLine board cur end delta 
+    | cur == end = uncurry (increment2DElement board) cur
+    | otherwise = drawLine (uncurry (increment2DElement board) cur) (sumPairs cur delta) end delta
 
 generateBoard :: [[Int]] -> Int -> Int -> [[Int]]
 generateBoard board x y = if x == -1 then board else generateBoard (map (const 0) [0 .. y] : board) (x - 1) y
@@ -59,18 +41,17 @@ isVertical line = fst (fst line) == fst (snd line)
 isHorizontal :: ((Int, Int), (Int, Int)) -> Bool
 isHorizontal line = snd (fst line) == snd (snd line)
 
-isDiagonalPos :: ((Int, Int), (Int, Int)) -> Bool
-isDiagonalPos line = div (snd (fst line) - snd (snd line)) (fst (fst line) - fst (snd line)) == 1 
+sumPairs :: (Int, Int) -> (Int, Int) -> (Int, Int)
+sumPairs p1 p2 = (fst p1 + fst p2, snd p1 + snd p2)
 
-isDiagonalNeg :: ((Int, Int), (Int, Int)) -> Bool
-isDiagonalNeg line = div (snd (fst line) - snd (snd line)) (fst (fst line) - fst (snd line)) == -1
+getDelta :: ((Int, Int), (Int, Int)) -> (Int, Int)
+getDelta line = (signum (fst (snd line) - fst (fst line)), signum (snd (snd line) - snd (fst line)))    
 
 drawLines :: [[Int]] -> [((Int, Int),(Int, Int))] -> [[Int]]
 drawLines board [] = board  
 
 drawLines board (line:lines) 
-    | isHorizontal line = drawLines (drawLineHor board (snd $ fst line) (fst $ fst line) (fst $ snd line)) lines 
-    | isVertical line = drawLines (uncurry (drawLineVer board) (fst line) (snd $ snd line)) lines 
+    | isHorizontal line || isVertical line = drawLines (uncurry (drawLine board) line (getDelta line)) lines
     | otherwise =  drawLines board lines
 
 isIntersecting x = if x > 1 then 1 else 0
